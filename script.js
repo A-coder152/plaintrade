@@ -7,7 +7,7 @@ const sellBtn = document.getElementById("sellBtn")
 const positionLabel = document.getElementById("positionLabel")
 const stockSelector = document.getElementById("stockSelector")
 
-const user = {
+let user = {
     cash: 10000,
     value: 10000,
     selectedStock: "Potato Co",
@@ -31,6 +31,14 @@ function updateSelector(){
         stockOption.textContent = stock
         stockSelector.appendChild(stockOption)
     })
+}
+
+function saveUser(){
+    localStorage.setItem("user", JSON.stringify(user))
+}
+
+function loadUser(){
+    if (localStorage.length) {user = JSON.parse(localStorage.getItem("user"))}
 }
 
 function updateStocks(){
@@ -74,7 +82,9 @@ function buyStock(amount) {
             position.avg = (position.qty * position.avg + cost) / (position.qty + amount)
             position.qty += amount
         }
+        user.trades.unshift({timestamp: Date.now(), action: "buy", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
         updatePortfolio()
+        saveUser()
     }
 }
 
@@ -86,7 +96,9 @@ function sellStock(amount) {
         position.qty -= amount
         if (position.qty == 0) {delete user.positions[user.selectedStock]}
         user.cash += amount * stocks[user.selectedStock].price
+        user.trades.unshift({timestamp: Date.now(), action: "sell", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
         updatePortfolio()
+        saveUser()
     }
 }
 
@@ -98,5 +110,6 @@ stockSelector.addEventListener("change", (event) => {
     updateUI()
 })
 
+loadUser()
 updateSelector()
 updateStocks()
