@@ -42,8 +42,8 @@ function updateStocks(){
 }
 
 function updatePortfolio() {
-    const stocksValue = Object.entries(user.positions).reduce((sum, [stock, qty]) => {
-        return sum + qty * stocks[stock].price
+    const stocksValue = Object.entries(user.positions).reduce((sum, [stock, stockdata]) => {
+        return sum + stockdata.qty * stocks[stock].price
     }, 0)
     user.value = user.cash + stocksValue
     updateUI()
@@ -54,7 +54,9 @@ function updateUI(){
     cashLabel.textContent = `Cash: $${user.cash.toFixed(2)}`
     priceLabel.textContent = `Stock Price: $${stocks[user.selectedStock].price.toFixed(2)}`
     if (user.positions[user.selectedStock]) {
-        positionLabel.textContent = `Your position: ${user.positions[user.selectedStock]} shares of ${user.selectedStock}`
+        const position = user.positions[user.selectedStock]
+        positionLabel.innerHTML = `Your position: ${position.qty} shares of ${user.selectedStock}. <br>
+        Average price: $${position.avg.toFixed(2)}, unrealized P/L: $${(position.qty * (stocks[user.selectedStock].price - position.avg)).toFixed(2)}`
     } else {
         positionLabel.textContent = "No position for the selected stock."
     }
@@ -66,9 +68,11 @@ function buyStock(amount) {
     if (user.cash >= cost) {
         user.cash -= cost
         if (!(user.selectedStock in user.positions)) {
-            user.positions[user.selectedStock] = amount
+            user.positions[user.selectedStock] = {qty: amount, avg: stocks[user.selectedStock].price}
         } else {
-            user.positions[user.selectedStock] += amount
+            const position = user.positions[user.selectedStock]
+            position.avg = (position.qty * position.avg + cost) / (position.qty + amount)
+            position.qty += amount
         }
         updatePortfolio()
     }
@@ -77,9 +81,10 @@ function buyStock(amount) {
 function sellStock(amount) {
     if (amount <= 0) {return}
     if (!(user.selectedStock in user.positions)) {return}
-    if (user.positions[user.selectedStock] >= amount) {
-        user.positions[user.selectedStock] -= amount
-        if (user.positions[user.selectedStock] == 0) {delete user.positions[user.selectedStock]}
+    const position = user.positions[user.selectedStock]
+    if (position.qty >= amount) {
+        position.qty -= amount
+        if (position.qty == 0) {delete user.positions[user.selectedStock]}
         user.cash += amount * stocks[user.selectedStock].price
         updatePortfolio()
     }
