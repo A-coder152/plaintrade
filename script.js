@@ -6,31 +6,44 @@ const buyBtn = document.getElementById("buyBtn")
 const sellBtn = document.getElementById("sellBtn")
 const positionLabel = document.getElementById("positionLabel")
 
-let cash = 10000
-let value = 10000
-let sharesOwned = 0
-let stockName = "Potato Co"
-let stockPrice = 100
+const user = {
+    cash: 10000,
+    value: 10000,
+    selectedStock: "Potato Co",
+    positions: [],
+    trades: [],
+}
+
+const stocks = {
+    "Potato Co": {
+        price: 100
+    }
+}
 
 function updateUI(){
-    valueLabel.textContent = `Value: $${value}`
-    cashLabel.textContent = `Cash: $${cash}`
-    positionLabel.textContent = `Your position: ${sharesOwned} shares of ${stockName}`
+    valueLabel.textContent = `Value: $${user.value}`
+    cashLabel.textContent = `Cash: $${user.cash}`
+    positionLabel.textContent = `Your position: ${user.positions[user.selectedStock]} shares of ${user.selectedStock}`
 }
 
 function buyStock(amount) {
-    const cost = amount * stockPrice
-    if (cash >= cost) {
-        cash -= cost
-        sharesOwned += amount
+    const cost = amount * stocks[user.selectedStock].price
+    if (user.cash >= cost) {
+        user.cash -= cost
+        if (!(user.selectedStock in user.positions)) {
+            user.positions[user.selectedStock] = amount
+        } else {
+            user.positions[user.selectedStock] += amount
+        }
         updateUI()
     }
 }
 
 function sellStock(amount) {
-    if (sharesOwned >= amount) {
-        sharesOwned -= amount
-        cash += amount * stockPrice
+    if (!(user.selectedStock in user.positions)) {return}
+    if (user.positions[user.selectedStock] >= amount) {
+        user.positions[user.selectedStock] -= amount
+        user.cash += amount * stocks[user.selectedStock].price
         updateUI()
     }
 }
