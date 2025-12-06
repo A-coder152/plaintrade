@@ -9,6 +9,8 @@ const stockSelector = document.getElementById("stockSelector")
 const positionsDiv = document.getElementById("positionsDiv")
 const tradesDiv = document.getElementById("tradesDiv")
 const resetBtn = document.getElementById("resetBtn")
+const watchlistBtn = document.getElementById("watchlistBtn")
+const watchlistDiv = document.getElementById("watchlistDiv")
 
 let user = {
     cash: 10000,
@@ -20,11 +22,24 @@ let user = {
 }
 
 const stocks = {
-    "Potato Co": {price: 100},
-    "Orange Inc": {price: 50},
-    "Banana Corp": {price: 200},
-    "Pineapple Ltd": {price: 500},
-    "Chicken Nugget": {price: 10}
+    "Potato Co": {price: 100, watchlist: false},
+    "Orange Inc": {price: 50, watchlist: false},
+    "Banana Corp": {price: 200, watchlist: false},
+    "Pineapple Ltd": {price: 500, watchlist: false},
+    "Chicken Nugget": {price: 10, watchlist: false}
+}
+
+function formatDate(timestamp){
+    const date = new Date(timestamp)
+    const dayName = date.toLocaleDateString('en-US', {weekday: "short"})
+    const timeString = date.toLocaleTimeString('en-US', {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    })
+
+    return `${dayName} ${timeString}`
 }
 
 function updateSelector(){
@@ -46,13 +61,26 @@ function updateTrades(){
             <p>Quantity</p>
             <p>Price</p>`
     user.trades.forEach((trade) => {
-        console.log(trade)
         tradesDiv.innerHTML += `
-            <p>${trade.timestamp}</p>
+            <p>${formatDate(trade.timestamp)}</p>
             <p>${trade.action}</p>
             <p>${trade.stock}</p>
             <p>${trade.quantity}</p>
             <p>${trade.price.toFixed(2)}</p>`
+    })
+}
+
+function updateWatchlist(){
+    watchlistDiv.innerHTML = ""
+    console.log(stocks)
+    Object.keys(stocks).forEach(stock => {
+        if (stocks[stock].watchlist){
+            const newWatchlist = document.createElement("div")
+            newWatchlist.innerHTML = `
+            <p>${stock}</p>
+            <p>${stocks[stock].price.toFixed(2)}<p>`
+            watchlistDiv.appendChild(newWatchlist)
+        }
     })
 }
 
@@ -69,7 +97,7 @@ function updateStocks(){
         stocks[stock].price = Math.max(0.1, stocks[stock].price * (1 + (Math.random() - 0.5) * 0.1))
     })
     updatePortfolio()
-    user.valueList.push({timestamp: Date.now(), value: user.value})
+    if (user) {user.valueList.push({timestamp: Date.now(), value: user.value})}
     if (user.valueList.length == 101) {user.valueList.pop()}
     setTimeout(updateStocks, 3000)
 }
@@ -107,6 +135,7 @@ function updateUI(){
         <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}</p>`
     })
     updateTrades()
+    updateWatchlist()
 }
 
 function buyStock(amount) {
@@ -148,6 +177,7 @@ sellBtn.addEventListener("click", () => sellStock(parseInt(qtyInput.value)))
 
 stockSelector.addEventListener("change", (event) => {
     user.selectedStock = event.target.value
+    watchlistBtn.textContent = stocks[user.selectedStock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
     updateUI()
 })
 
@@ -166,8 +196,14 @@ resetBtn.addEventListener("click", () => {
     updatePortfolio()
 })
 
+watchlistBtn.addEventListener("click", () => {
+    stocks[user.selectedStock].watchlist = !stocks[user.selectedStock].watchlist
+    watchlistBtn.textContent = stocks[user.selectedStock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
+    updateWatchlist()
+})
+
 loadUser()
 updateTrades()
 updateSelector()
-updateStocks()
 updatePortfolio()
+updateStocks()
