@@ -6,6 +6,7 @@ const buyBtn = document.getElementById("buyBtn")
 const sellBtn = document.getElementById("sellBtn")
 const positionLabel = document.getElementById("positionLabel")
 const stockSelector = document.getElementById("stockSelector")
+const positionsDiv = document.getElementById("positionsDiv")
 
 let user = {
     cash: 10000,
@@ -31,6 +32,7 @@ function updateSelector(){
         stockOption.textContent = stock
         stockSelector.appendChild(stockOption)
     })
+    stockSelector.value = user.selectedStock
 }
 
 function saveUser(){
@@ -68,6 +70,17 @@ function updateUI(){
     } else {
         positionLabel.textContent = "No position for the selected stock."
     }
+    positionsDiv.innerHTML = `<p>Name</p>
+            <p>Position</p>
+            <p>Average Cost</p>
+            <p>Unrealized P/L</p>`
+    Object.entries(user.positions).forEach(([stock, position]) => {
+        positionsDiv.innerHTML += `
+        <p>${stock}</p>
+        <p>${position.qty}</p>
+        <p>$${position.avg.toFixed(2)}</p>
+        <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}`
+    })
 }
 
 function buyStock(amount) {
@@ -113,3 +126,4 @@ stockSelector.addEventListener("change", (event) => {
 loadUser()
 updateSelector()
 updateStocks()
+updatePortfolio()

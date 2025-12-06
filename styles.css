@@ -10,3 +10,9 @@ body {
     flex-direction: row;
     gap: 1rem;
 }
+
+.positionsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 0.25rem;
+}
