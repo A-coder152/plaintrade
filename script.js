@@ -16,6 +16,7 @@ let user = {
     selectedStock: "Potato Co",
     positions: {},
     trades: [],
+    valueList: [],
 }
 
 const stocks = {
@@ -38,6 +39,7 @@ function updateSelector(){
 }
 
 function updateTrades(){
+    if (user.trades.length == 51) {user.trades.pop()}
     tradesDiv.innerHTML = `<p>Timestamp</p>
             <p>Action</p>
             <p>Stock</p>
@@ -64,9 +66,11 @@ function loadUser(){
 
 function updateStocks(){
     Object.keys(stocks).forEach(stock => {
-        stocks[stock].price *= 1 + (Math.random() - 0.5) * 0.1
+        stocks[stock].price = Math.max(0.1, stocks[stock].price * (1 + (Math.random() - 0.5) * 0.1))
     })
     updatePortfolio()
+    user.valueList.push({timestamp: Date.now(), value: user.value})
+    if (user.valueList.length == 101) {user.valueList.pop()}
     setTimeout(updateStocks, 3000)
 }
 
@@ -92,18 +96,21 @@ function updateUI(){
     positionsDiv.innerHTML = `<p>Name</p>
             <p>Position</p>
             <p>Average Cost</p>
+            <p>Position Value</p>
             <p>Unrealized P/L</p>`
     Object.entries(user.positions).forEach(([stock, position]) => {
         positionsDiv.innerHTML += `
         <p>${stock}</p>
         <p>${position.qty}</p>
         <p>$${position.avg.toFixed(2)}</p>
-        <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}`
+        <p>$${position.qty * stocks[stock].price}</p>
+        <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}</p>`
     })
+    updateTrades()
 }
 
 function buyStock(amount) {
-    if (amount <= 0) {return}
+    if (!(amount > 0)) {return}
     const cost = amount * stocks[user.selectedStock].price
     if (user.cash >= cost) {
         user.cash -= cost
@@ -122,7 +129,7 @@ function buyStock(amount) {
 }
 
 function sellStock(amount) {
-    if (amount <= 0) {return}
+    if (!(amount > 0)) {return}
     if (!(user.selectedStock in user.positions)) {return}
     const position = user.positions[user.selectedStock]
     if (position.qty >= amount) {
@@ -151,6 +158,7 @@ resetBtn.addEventListener("click", () => {
         selectedStock: "Potato Co",
         positions: {},
         trades: [],
+        valueList: [],
     }
     saveUser()
     updateTrades()

@@ -13,11 +13,7 @@ body {
 
 .positionsGrid, .tradesGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     column-gap: 0.25rem;
     margin-bottom: 3rem;
-}
-
-.tradesGrid {
-    grid-template-columns: repeat(5, 1fr);
 }
