@@ -7,6 +7,7 @@ const sellBtn = document.getElementById("sellBtn")
 const positionLabel = document.getElementById("positionLabel")
 const stockSelector = document.getElementById("stockSelector")
 const positionsDiv = document.getElementById("positionsDiv")
+const tradesDiv = document.getElementById("tradesDiv")
 
 let user = {
     cash: 10000,
@@ -33,6 +34,23 @@ function updateSelector(){
         stockSelector.appendChild(stockOption)
     })
     stockSelector.value = user.selectedStock
+}
+
+function updateTrades(){
+    tradesDiv.innerHTML = `<p>Timestamp</p>
+            <p>Action</p>
+            <p>Stock</p>
+            <p>Quantity</p>
+            <p>Price</p>`
+    user.trades.forEach((trade) => {
+        console.log(trade)
+        tradesDiv.innerHTML += `
+            <p>${trade.timestamp}</p>
+            <p>${trade.action}</p>
+            <p>${trade.stock}</p>
+            <p>${trade.quantity}</p>
+            <p>${trade.price.toFixed(2)}</p>`
+    })
 }
 
 function saveUser(){
@@ -96,6 +114,7 @@ function buyStock(amount) {
             position.qty += amount
         }
         user.trades.unshift({timestamp: Date.now(), action: "buy", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
+        updateTrades()
         updatePortfolio()
         saveUser()
     }
@@ -110,6 +129,7 @@ function sellStock(amount) {
         if (position.qty == 0) {delete user.positions[user.selectedStock]}
         user.cash += amount * stocks[user.selectedStock].price
         user.trades.unshift({timestamp: Date.now(), action: "sell", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
+        updateTrades()
         updatePortfolio()
         saveUser()
     }
@@ -124,6 +144,7 @@ stockSelector.addEventListener("change", (event) => {
 })
 
 loadUser()
+updateTrades()
 updateSelector()
 updateStocks()
 updatePortfolio()
