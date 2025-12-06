@@ -8,6 +8,7 @@ const positionLabel = document.getElementById("positionLabel")
 const stockSelector = document.getElementById("stockSelector")
 const positionsDiv = document.getElementById("positionsDiv")
 const tradesDiv = document.getElementById("tradesDiv")
+const resetBtn = document.getElementById("resetBtn")
 
 let user = {
     cash: 10000,
@@ -141,6 +142,20 @@ sellBtn.addEventListener("click", () => sellStock(parseInt(qtyInput.value)))
 stockSelector.addEventListener("change", (event) => {
     user.selectedStock = event.target.value
     updateUI()
+})
+
+resetBtn.addEventListener("click", () => {
+    user = {
+        cash: 10000,
+        value: 10000,
+        selectedStock: "Potato Co",
+        positions: {},
+        trades: [],
+    }
+    saveUser()
+    updateTrades()
+    updateSelector()
+    updatePortfolio()
 })
 
 loadUser()
