@@ -121,8 +121,8 @@ function updatePortfolio() {
 }
 
 function updateUI(){
-    valueLabel.textContent = `Value: $${user.value.toFixed(2)}`
-    cashLabel.textContent = `Cash: $${user.cash.toFixed(2)}`
+    valueLabel.textContent = `$${user.value.toFixed(2)}`
+    cashLabel.textContent = `$${user.cash.toFixed(2)}`
     priceLabel.textContent = `Stock Price: $${stocks[user.selectedStock].price.toFixed(2)}`
     if (user.positions[user.selectedStock]) {
         const position = user.positions[user.selectedStock]
@@ -131,7 +131,7 @@ function updateUI(){
     } else {
         positionLabel.textContent = "No position for the selected stock."
     }
-    if (user.positions.length){
+    if (Object.keys(user.positions).length){
         noPositionsMessage.style.display = "none"
         positionsDiv.innerHTML = `<p>Name</p>
                 <p>Position</p>
