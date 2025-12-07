@@ -32,6 +32,7 @@
         <p id="positionLabel" class="trade">Your position: 0 stocks</p>
         <div class="expando home">
             <button class="expandoHeader" aria-controls="positionsDiv">Your Positions</button>
+            <p id="noPositionsMessage" style="display: none;">You have no active positions.</p>
             <div class="positionsGrid expandoContent" id="positionsDiv" style="display: none;">
                 <p>Name</p>
                 <p>Position</p>
@@ -42,6 +43,7 @@
         </div>
         <div class="expando home">
             <button class="expandoHeader" aria-controls="tradesDiv">Your Trades</button>
+            <p id="noTradesMessage" style="display: none;">You have not made any trades.</p>
             <div class="tradesGrid expandoContent" id="tradesDiv" style="display: none;">
                 <p>Timestamp</p>
                 <p>Action</p>

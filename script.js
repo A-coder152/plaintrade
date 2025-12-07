@@ -13,6 +13,8 @@ const watchlistBtn = document.getElementById("watchlistBtn")
 const watchlistDiv = document.getElementById("watchlistDiv")
 const homeBtn = document.getElementById("homeBtn")
 const tradeBtn = document.getElementById("tradeBtn")
+const noPositionsMessage = document.getElementById("noPositionsMessage")
+const noTradesMessage = document.getElementById("noTradesMessage")
 
 let user = {
     cash: 10000,
@@ -57,6 +59,12 @@ function updateSelector(){
 
 function updateTrades(){
     if (user.trades.length == 51) {user.trades.pop()}
+    if (!user.trades.length) {
+        tradesDiv.innerHTML = ""
+        noTradesMessage.style.display = tradesDiv.style.display
+        return
+    }
+    noTradesMessage.style.display = "none"
     tradesDiv.innerHTML = `<p>Timestamp</p>
             <p>Action</p>
             <p>Stock</p>
@@ -123,19 +131,24 @@ function updateUI(){
     } else {
         positionLabel.textContent = "No position for the selected stock."
     }
-    positionsDiv.innerHTML = `<p>Name</p>
-            <p>Position</p>
-            <p>Average Cost</p>
-            <p>Position Value</p>
-            <p>Unrealized P/L</p>`
-    Object.entries(user.positions).forEach(([stock, position]) => {
-        positionsDiv.innerHTML += `
-        <p>${stock}</p>
-        <p>${position.qty}</p>
-        <p>$${position.avg.toFixed(2)}</p>
-        <p>$${(position.qty * stocks[stock].price).toFixed(2)}</p>
-        <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}</p>`
-    })
+    if (user.positions.length){
+        noPositionsMessage.style.display = "none"
+        positionsDiv.innerHTML = `<p>Name</p>
+                <p>Position</p>
+                <p>Average Cost</p>
+                <p>Position Value</p>
+                <p>Unrealized P/L</p>`
+        Object.entries(user.positions).forEach(([stock, position]) => {
+            positionsDiv.innerHTML += `
+            <p>${stock}</p>
+            <p>${position.qty}</p>
+            <p>$${position.avg.toFixed(2)}</p>
+            <p>$${(position.qty * stocks[stock].price).toFixed(2)}</p>
+            <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}</p>`
+    })} else {
+        positionsDiv.innerHTML = ""
+        noPositionsMessage.style.display = positionsDiv.style.display
+    }
     updateTrades()
     updateWatchlist()
 }
@@ -238,6 +251,7 @@ document.querySelectorAll(".expandoHeader").forEach(expando => {
                 content.style.display = "grid"
             }
         } else {content.style.display = "none"}
+        updateUI()
     })
 })
 
