@@ -15,5 +15,26 @@ body {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     column-gap: 0.25rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
+}
+
+.trade {
+    display: none;
+}
+
+.expando {
+    flex-direction: column;
+    margin-top: 2rem;
+}
+
+.expandoHeader {
+    background: none;
+    border: none;
+    font-size: large;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.expandoContent {
+    transition: all 0.3s ease-in-out;
 }

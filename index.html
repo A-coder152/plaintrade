@@ -17,7 +17,7 @@
         </div>
         <h4>Watchlist</h4>
         <div id="watchlistDiv" class="horiz" style="margin-bottom: 1rem; gap: 2rem;"></div>
-        <select id="stockSelector">
+        <select id="stockSelector" class="trade">
             <option value="Potato Co">Potato Co</option>
         </select>
         <div class="horiz trade">
@@ -30,21 +30,25 @@
             <button id="sellBtn">Sell</button>
         </div>
         <p id="positionLabel" class="trade">Your position: 0 stocks</p>
-        <h3 class="home">Your Positions</h3>
-        <div class="positionsGrid home" id="positionsDiv">
-            <p>Name</p>
-            <p>Position</p>
-            <p>Average Cost</p>
-            <p>Position Value</p>
-            <p>Unrealized P/L</p>
+        <div class="expando home">
+            <button class="expandoHeader" aria-controls="positionsDiv">Your Positions</button>
+            <div class="positionsGrid expandoContent" id="positionsDiv" style="display: none;">
+                <p>Name</p>
+                <p>Position</p>
+                <p>Average Cost</p>
+                <p>Position Value</p>
+                <p>Unrealized P/L</p>
+            </div>
         </div>
-        <h3 class="home">Your Trades</h3>
-        <div class="tradesGrid home" id="tradesDiv">
-            <p>Timestamp</p>
-            <p>Action</p>
-            <p>Stock</p>
-            <p>Quantity</p>
-            <p>Price</p>
+        <div class="expando home">
+            <button class="expandoHeader" aria-controls="tradesDiv">Your Trades</button>
+            <div class="tradesGrid expandoContent" id="tradesDiv" style="display: none;">
+                <p>Timestamp</p>
+                <p>Action</p>
+                <p>Stock</p>
+                <p>Quantity</p>
+                <p>Price</p>
+            </div>
         </div>
         <script src="script.js"></script>
     </body>

@@ -133,7 +133,7 @@ function updateUI(){
         <p>${stock}</p>
         <p>${position.qty}</p>
         <p>$${position.avg.toFixed(2)}</p>
-        <p>$${position.qty * stocks[stock].price}</p>
+        <p>$${(position.qty * stocks[stock].price).toFixed(2)}</p>
         <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}</p>`
     })
     updateTrades()
@@ -226,6 +226,18 @@ tradeBtn.addEventListener("click", () => {
     })
     document.querySelectorAll(".trade").forEach(element => {
         element.style.display = "flex"
+    })
+})
+
+document.querySelectorAll(".expandoHeader").forEach(expando => {
+    expando.addEventListener("click", () => {
+        const content = document.getElementById(expando.getAttribute("aria-controls"))
+        if (content.style.display == "none"){
+            content.style.display = "flex"
+            if (content.classList.contains("positionsGrid") || content.classList.contains("tradesGrid")) {
+                content.style.display = "grid"
+            }
+        } else {content.style.display = "none"}
     })
 })
 
