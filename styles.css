@@ -107,3 +107,29 @@ nav button {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin: 0;
 }
+
+.watchlist {
+    margin: 2.5rem 0 1rem;
+    background-color: rgba(20, 20, 51, 0.5);
+    border: 2px solid rgba(20, 20, 51, 0.8);
+    border-radius: 1.5rem;
+    padding: 0.5rem 1.5rem;
+}
+
+.watchlist h2 {
+    margin: 0;
+}
+
+.watchlist p{
+    margin: 1rem 0 0;
+}
+
+.watchlist h3 {
+    margin: 0.1rem 0 0;
+}
+
+#watchlistDiv {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}

@@ -88,7 +88,7 @@ function updateWatchlist(){
             newWatchlist.onclick = () => {selectStock(stock)}
             newWatchlist.innerHTML = `
             <p>${stock}</p>
-            <p>${stocks[stock].price.toFixed(2)}<p>`
+            <h3>${stocks[stock].price.toFixed(2)}<h3>`
             watchlistDiv.appendChild(newWatchlist)
         }
     })
