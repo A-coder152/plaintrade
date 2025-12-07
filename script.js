@@ -11,6 +11,8 @@ const tradesDiv = document.getElementById("tradesDiv")
 const resetBtn = document.getElementById("resetBtn")
 const watchlistBtn = document.getElementById("watchlistBtn")
 const watchlistDiv = document.getElementById("watchlistDiv")
+const homeBtn = document.getElementById("homeBtn")
+const tradeBtn = document.getElementById("tradeBtn")
 
 let user = {
     cash: 10000,
@@ -72,10 +74,10 @@ function updateTrades(){
 
 function updateWatchlist(){
     watchlistDiv.innerHTML = ""
-    console.log(stocks)
     Object.keys(stocks).forEach(stock => {
         if (stocks[stock].watchlist){
             const newWatchlist = document.createElement("div")
+            newWatchlist.onclick = () => {selectStock(stock)}
             newWatchlist.innerHTML = `
             <p>${stock}</p>
             <p>${stocks[stock].price.toFixed(2)}<p>`
@@ -138,6 +140,13 @@ function updateUI(){
     updateWatchlist()
 }
 
+function selectStock(stock) {
+    stockSelector.value = stock
+    user.selectedStock = stock
+    watchlistBtn.textContent = stocks[stock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
+    updateUI()
+}
+
 function buyStock(amount) {
     if (!(amount > 0)) {return}
     const cost = amount * stocks[user.selectedStock].price
@@ -176,9 +185,7 @@ buyBtn.addEventListener("click", () => buyStock(parseInt(qtyInput.value)))
 sellBtn.addEventListener("click", () => sellStock(parseInt(qtyInput.value)))
 
 stockSelector.addEventListener("change", (event) => {
-    user.selectedStock = event.target.value
-    watchlistBtn.textContent = stocks[user.selectedStock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
-    updateUI()
+    selectStock(event.target.value)
 })
 
 resetBtn.addEventListener("click", () => {
@@ -200,6 +207,26 @@ watchlistBtn.addEventListener("click", () => {
     stocks[user.selectedStock].watchlist = !stocks[user.selectedStock].watchlist
     watchlistBtn.textContent = stocks[user.selectedStock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
     updateWatchlist()
+})
+
+homeBtn.addEventListener("click", () => {
+    document.querySelectorAll(".trade").forEach(element => {
+        element.style.display = "none"
+    })
+    document.querySelectorAll(".home").forEach(element => {
+        element.style.display = "flex"
+        if (element.classList.contains("positionsGrid") || element.classList.contains("tradesGrid")) {
+            element.style.display = "grid"
+        }
+    })
+})
+tradeBtn.addEventListener("click", () => {
+    document.querySelectorAll(".home").forEach(element => {
+        element.style.display = "none"
+    })
+    document.querySelectorAll(".trade").forEach(element => {
+        element.style.display = "flex"
+    })
 })
 
 loadUser()

@@ -6,7 +6,11 @@
     </head>
     <body>
         <h1>Plaintrade</h1>
-        <button id="resetBtn">Reset Portfolio</button>
+        <div class="horiz">
+            <button id="homeBtn">Home</button>
+            <button id="tradeBtn">Trade</button>
+            <button id="resetBtn">Reset Portfolio</button>
+        </div>
         <div class="horiz">
             <h3 id="valueLabel">Value: $10000</h3>
             <h3 id="cashLabel">Cash: $10000</h3>
@@ -16,26 +20,26 @@
         <select id="stockSelector">
             <option value="Potato Co">Potato Co</option>
         </select>
-        <div class="horiz">
+        <div class="horiz trade">
             <p id="priceLabel">Stock price: $100</p>
             <button id="watchlistBtn" style="margin: 1rem;">Add Stock to Watchlist</button>
         </div>
-        <div class="horiz">
+        <div class="horiz trade">
             <input type="number" id="qtyInput">
             <button id="buyBtn">Buy</button>
             <button id="sellBtn">Sell</button>
         </div>
-        <p id="positionLabel">Your position: 0 stocks</p>
-        <h3>Your Positions</h3>
-        <div class="positionsGrid" id="positionsDiv">
+        <p id="positionLabel" class="trade">Your position: 0 stocks</p>
+        <h3 class="home">Your Positions</h3>
+        <div class="positionsGrid home" id="positionsDiv">
             <p>Name</p>
             <p>Position</p>
             <p>Average Cost</p>
             <p>Position Value</p>
             <p>Unrealized P/L</p>
         </div>
-        <h3>Your Trades</h3>
-        <div class="tradesGrid" id="tradesDiv">
+        <h3 class="home">Your Trades</h3>
+        <div class="tradesGrid home" id="tradesDiv">
             <p>Timestamp</p>
             <p>Action</p>
             <p>Stock</p>
