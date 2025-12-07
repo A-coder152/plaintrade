@@ -25,12 +25,12 @@ let user = {
     valueList: [],
 }
 
-const stocks = {
-    "Potato Co": {price: 100, watchlist: false},
-    "Orange Inc": {price: 50, watchlist: false},
-    "Banana Corp": {price: 200, watchlist: false},
-    "Pineapple Ltd": {price: 500, watchlist: false},
-    "Chicken Nugget": {price: 10, watchlist: false}
+let stocks = {
+    "Potato Co": {price: 100, priceHistory: [], volatility: 1, baseVolatility: 0.2, watchlist: false},
+    "Orange Inc": {price: 50, priceHistory: [], volatility: 1.5, baseVolatility: 0.5, watchlist: false},
+    "Banana Corp": {price: 200, priceHistory: [], volatility: 0.8, baseVolatility: 0.1, watchlist: false},
+    "Pineapple Ltd": {price: 500, priceHistory: [], volatility: 0.9, baseVolatility: 0.4, watchlist: false},
+    "Chicken Nugget": {price: 10, priceHistory: [], volatility: 2, baseVolatility: 0.7, watchlist: false}
 }
 
 function formatDate(timestamp){
@@ -120,19 +120,24 @@ function updateWatchlist(){
 
 function saveUser(){
     localStorage.setItem("user", JSON.stringify(user))
+    localStorage.setItem("stocks", JSON.stringify(stocks))
 }
 
 function loadUser(){
-    if (localStorage.length) {user = JSON.parse(localStorage.getItem("user"))}
+    if (localStorage.getItem("user")) {user = JSON.parse(localStorage.getItem("user"))}
+    if (localStorage.getItem("stocks")) {stocks = JSON.parse(localStorage.getItem("stocks"))}
 }
 
 function updateStocks(){
     Object.keys(stocks).forEach(stock => {
-        stocks[stock].price = Math.max(0.1, stocks[stock].price * (1 + (Math.random() - 0.5) * 0.1))
+        stocks[stock].price = Math.max(0.1, stocks[stock].price * (1 + (Math.random() - 0.5) * 0.1 * stocks[stock].volatility))
+        stocks[stock].volatility = stocks[stock].baseVolatility + 5 * Math.exp(-Math.pow(stocks[stock].price, 0.13))
+        stocks[stock].priceHistory.push(stocks[stock].price)
+        if (stocks[stock].priceHistory.length == 51) {stocks[stock].shift()}
     })
     updatePortfolio()
     if (user) {user.valueList.push({timestamp: Date.now(), value: user.value})}
-    if (user.valueList.length == 101) {user.valueList.pop()}
+    if (user.valueList.length == 201) {user.valueList.shift()}
     setTimeout(updateStocks, 3000)
 }
 
@@ -234,6 +239,13 @@ resetBtn.addEventListener("click", () => {
         trades: [],
         valueList: [],
     }
+    stocks = {
+        "Potato Co": {price: 100, priceHistory: [], volatility: 1, baseVolatility: 0.2, watchlist: false},
+        "Orange Inc": {price: 50, priceHistory: [], volatility: 1.5, baseVolatility: 0.5, watchlist: false},
+        "Banana Corp": {price: 200, priceHistory: [], volatility: 0.8, baseVolatility: 0.1, watchlist: false},
+        "Pineapple Ltd": {price: 500, priceHistory: [], volatility: 0.9, baseVolatility: 0.4, watchlist: false},
+        "Chicken Nugget": {price: 10, priceHistory: [], volatility: 2, baseVolatility: 0.7, watchlist: false}
+    }
     saveUser()
     updateTrades()
     updateSelector()
@@ -244,6 +256,7 @@ watchlistBtn.addEventListener("click", () => {
     stocks[user.selectedStock].watchlist = !stocks[user.selectedStock].watchlist
     watchlistBtn.textContent = stocks[user.selectedStock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
     updateWatchlist()
+    saveUser()
 })
 
 homeBtn.addEventListener("click", () => homePage())
