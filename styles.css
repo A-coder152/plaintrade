@@ -8,10 +8,19 @@ body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+.trade {
+    flex-direction: column;
+}
+
 .horiz {
     display:flex;
     flex-direction: row;
+    align-items: center;
     gap: 1rem;
+}
+
+.trade {
+    display: none;
 }
 
 .positionsGrid, .tradesGrid {
@@ -33,10 +42,6 @@ body {
 
 .positionsGrid p:nth-child(-n + 5), .tradesGrid p:nth-child(-n + 5) {
     margin-top: 0.8rem;
-}
-
-.trade {
-    display: none;
 }
 
 .expando {
@@ -98,7 +103,7 @@ nav button {
     justify-content: space-around;
 }
 
-.moneyDiv h4 {
+.moneyDiv h4, .moneyh4 {
     margin: 0;
 }
 
@@ -109,7 +114,7 @@ nav button {
 }
 
 .watchlist {
-    margin: 2.5rem 0 1rem;
+    margin: 2rem 0 1rem;
     background-color: rgba(20, 20, 51, 0.5);
     border: 2px solid rgba(20, 20, 51, 0.8);
     border-radius: 1.5rem;
@@ -133,3 +138,67 @@ nav button {
     align-items: center;
     justify-content: center;
 }
+
+#stockSelector {
+    margin-left: 1rem;
+    background-color: rgba(20, 20, 51, 0.5);
+    border: 2px solid rgba(20, 20, 51, 0.8);
+    color: #cde;
+    height: fit-content;
+    align-self: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 1.25rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+}
+
+.trade button {
+    background-color: rgba(20, 20, 51, 0.5);
+    border: 2px solid rgba(20, 20, 51, 0.8);
+    border-radius: 1rem;
+    color: #def;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+#watchlistBtn {
+    background-color: rgba(47, 51, 20, 0.5);
+    border: 2px solid rgba(50, 51, 20, 0.8);
+    color: rgb(254, 255, 221);
+}
+
+input {
+    background-color: rgba(20, 20, 51, 0.5);
+    border: 2px solid rgba(20, 20, 51, 0.8);
+    border-radius: 1rem;
+    color: #def;
+    padding: 0.2rem 1rem;
+    width: 30%;
+    font-size: 1rem;
+}
+
+.controlsDiv button {
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+}
+
+#buyBtn {
+    background-color: rgba(26, 51, 20, 0.5);
+    border: 2px solid rgba(25, 51, 20, 0.8);
+    color: rgb(228, 255, 221);
+}
+
+#sellBtn {
+    background-color: rgba(51, 20, 20, 0.5);
+    border: 2px solid rgba(51, 20, 20, 0.8);
+    color: rgb(255, 221, 221);
+}
+
+/*
+- finish trade page design
+- stocks rework
+- p/l design (green, red, % etc)
+- line chart for portfolio
+- line chart for stocks */

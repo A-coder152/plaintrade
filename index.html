@@ -27,15 +27,22 @@
             <h2>Your Watchlist</h2>
             <div id="watchlistDiv" class="horiz" style="gap: 2rem;"></div>
         </div>
-        <select id="stockSelector" class="trade">
-            <option value="Potato Co">Potato Co</option>
-        </select>
         <div class="horiz trade">
-            <p id="priceLabel">Stock price: $100</p>
-            <button id="watchlistBtn" style="margin: 1rem;">Add Stock to Watchlist</button>
+            <h3>Stock Selected</h3>
+            <select id="stockSelector">
+                <option value="Potato Co">Potato Co</option>
+            </select>
+            <button id="watchlistBtn">Add Stock to Watchlist</button>
         </div>
-        <div class="horiz trade">
+        <div class="trade" style="margin: 1rem;">
+            <h4 class="moneyh4">Stock Price</h4>
+            <h3 id="priceLabel" class="moneyLabel">$100</h3>
+        </div>
+        <div class="horiz trade" style="margin-bottom: 0.5rem; justify-content: center;">
+            <p style="margin: 0;">Quantity:</p>
             <input type="number" id="qtyInput">
+        </div>
+        <div class="horiz trade controlsDiv">
             <button id="buyBtn">Buy</button>
             <button id="sellBtn">Sell</button>
         </div>

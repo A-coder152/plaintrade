@@ -46,6 +46,29 @@ function formatDate(timestamp){
     return `${dayName} ${timeString}`
 }
 
+function homePage() {
+    document.querySelectorAll(".trade").forEach(element => {
+        element.style.display = "none"
+    })
+    document.querySelectorAll(".home").forEach(element => {
+        element.style.display = "flex"
+        if (element.classList.contains("positionsGrid") || element.classList.contains("tradesGrid")) {
+            element.style.display = "grid"
+        }
+    })
+    updateUI()
+}
+
+function tradePage() {
+    document.querySelectorAll(".home").forEach(element => {
+        element.style.display = "none"
+    })
+    document.querySelectorAll(".trade").forEach(element => {
+        element.style.display = "flex"
+    })
+    updateUI()
+}
+
 function updateSelector(){
     stockSelector.innerHTML = ""
     Object.keys(stocks).forEach(stock => {
@@ -76,7 +99,7 @@ function updateTrades(){
             <p>${trade.action}</p>
             <p>${trade.stock}</p>
             <p>${trade.quantity}</p>
-            <p>${trade.price.toFixed(2)}</p>`
+            <p>$${trade.price.toFixed(2)}</p>`
     })
 }
 
@@ -85,6 +108,7 @@ function updateWatchlist(){
     Object.keys(stocks).forEach(stock => {
         if (stocks[stock].watchlist){
             const newWatchlist = document.createElement("div")
+            newWatchlist.style.cursor = "pointer"
             newWatchlist.onclick = () => {selectStock(stock)}
             newWatchlist.innerHTML = `
             <p>${stock}</p>
@@ -123,7 +147,7 @@ function updatePortfolio() {
 function updateUI(){
     valueLabel.textContent = `$${user.value.toFixed(2)}`
     cashLabel.textContent = `$${user.cash.toFixed(2)}`
-    priceLabel.textContent = `Stock Price: $${stocks[user.selectedStock].price.toFixed(2)}`
+    priceLabel.textContent = `$${stocks[user.selectedStock].price.toFixed(2)}`
     if (user.positions[user.selectedStock]) {
         const position = user.positions[user.selectedStock]
         positionLabel.innerHTML = `Your position: ${position.qty} shares of ${user.selectedStock}. <br>
@@ -157,7 +181,7 @@ function selectStock(stock) {
     stockSelector.value = stock
     user.selectedStock = stock
     watchlistBtn.textContent = stocks[stock].watchlist ? "Remove Stock from Watchlist" : "Add Stock to Watchlist"
-    updateUI()
+    tradePage()
 }
 
 function buyStock(amount) {
@@ -222,25 +246,8 @@ watchlistBtn.addEventListener("click", () => {
     updateWatchlist()
 })
 
-homeBtn.addEventListener("click", () => {
-    document.querySelectorAll(".trade").forEach(element => {
-        element.style.display = "none"
-    })
-    document.querySelectorAll(".home").forEach(element => {
-        element.style.display = "flex"
-        if (element.classList.contains("positionsGrid") || element.classList.contains("tradesGrid")) {
-            element.style.display = "grid"
-        }
-    })
-})
-tradeBtn.addEventListener("click", () => {
-    document.querySelectorAll(".home").forEach(element => {
-        element.style.display = "none"
-    })
-    document.querySelectorAll(".trade").forEach(element => {
-        element.style.display = "flex"
-    })
-})
+homeBtn.addEventListener("click", () => homePage())
+tradeBtn.addEventListener("click", () => tradePage())
 
 document.querySelectorAll(".expandoHeader").forEach(expando => {
     expando.addEventListener("click", () => {
