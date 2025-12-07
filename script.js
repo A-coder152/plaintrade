@@ -112,7 +112,7 @@ function updateWatchlist(){
             newWatchlist.onclick = () => {selectStock(stock)}
             newWatchlist.innerHTML = `
             <p>${stock}</p>
-            <h3>${stocks[stock].price.toFixed(2)}<h3>`
+            <h3 class=${stocks[stock].priceHistory.at(-2) > stocks[stock].price ? "red" : "green"}>${stocks[stock].price.toFixed(2)}<h3>`
             watchlistDiv.appendChild(newWatchlist)
         }
     })
@@ -133,7 +133,7 @@ function updateStocks(){
         stocks[stock].price = Math.max(0.1, stocks[stock].price * (1 + (Math.random() - 0.5) * 0.1 * stocks[stock].volatility))
         stocks[stock].volatility = stocks[stock].baseVolatility + 5 * Math.exp(-Math.pow(stocks[stock].price, 0.13))
         stocks[stock].priceHistory.push(stocks[stock].price)
-        if (stocks[stock].priceHistory.length == 51) {stocks[stock].shift()}
+        if (stocks[stock].priceHistory.length == 51) {stocks[stock].priceHistory.shift()}
     })
     updatePortfolio()
     if (user) {user.valueList.push({timestamp: Date.now(), value: user.value})}
@@ -153,6 +153,11 @@ function updateUI(){
     valueLabel.textContent = `$${user.value.toFixed(2)}`
     cashLabel.textContent = `$${user.cash.toFixed(2)}`
     priceLabel.textContent = `$${stocks[user.selectedStock].price.toFixed(2)}`
+    const priceclass = stocks[user.selectedStock].priceHistory.at(-2) > stocks[user.selectedStock].price ? "red" : "green"
+    if (!priceLabel.classList.contains(priceclass)){
+        priceLabel.classList.add(priceclass)
+        priceLabel.classList.remove(priceclass == "red" ? "green" : "red")
+    }
     if (user.positions[user.selectedStock]) {
         const position = user.positions[user.selectedStock]
         positionLabel.innerHTML = `Your position: ${position.qty} shares of ${user.selectedStock}. <br>
@@ -173,7 +178,9 @@ function updateUI(){
             <p>${position.qty}</p>
             <p>$${position.avg.toFixed(2)}</p>
             <p>$${(position.qty * stocks[stock].price).toFixed(2)}</p>
-            <p>$${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)}</p>`
+            <p class=${position.avg > stocks[stock].price ? "red" : "green"}>
+                $${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)} (${((stocks[stock].price / position.avg - 1) * 100).toFixed(2)}%)
+            </p>`
     })} else {
         positionsDiv.innerHTML = ""
         noPositionsMessage.style.display = positionsDiv.style.display

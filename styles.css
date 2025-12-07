@@ -196,6 +196,14 @@ input {
     color: rgb(255, 221, 221);
 }
 
+.green {
+    color: rgb(185, 255, 180);
+}
+
+.red {
+    color: rgb(255, 181, 181);
+}
+
 /*
 - finish trade page design
 - stocks rework
