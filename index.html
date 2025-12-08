@@ -23,6 +23,7 @@
                 <h3 id="cashLabel" class="moneyLabel">$10000</h3>
             </div>
         </div>
+        <canvas class="home" id="homeChart" width="600" height="200"></canvas>
         <div class="watchlist">
             <h2>Your Watchlist</h2>
             <div id="watchlistDiv" class="horiz" style="gap: 2rem;"></div>
@@ -34,9 +35,12 @@
             </select>
             <button id="watchlistBtn">Add Stock to Watchlist</button>
         </div>
-        <div class="trade" style="margin: 1rem;">
-            <h4 class="moneyh4">Stock Price</h4>
-            <h3 id="priceLabel" class="moneyLabel">$100</h3>
+        <div class="trade horiz">
+            <div style="margin: 1rem;">
+                <h4 class="moneyh4">Stock Price</h4>
+                <h3 id="priceLabel" class="moneyLabel">$100</h3>
+            </div>
+            <canvas class="trade" id="stockChart" width="150" height="50"></canvas>
         </div>
         <div class="horiz trade" style="margin-bottom: 0.5rem; justify-content: center;">
             <p style="margin: 0;">Quantity:</p>

@@ -15,6 +15,10 @@ const homeBtn = document.getElementById("homeBtn")
 const tradeBtn = document.getElementById("tradeBtn")
 const noPositionsMessage = document.getElementById("noPositionsMessage")
 const noTradesMessage = document.getElementById("noTradesMessage")
+const homeChart = document.getElementById("homeChart")
+const homeChartCtx = homeChart.getContext("2d")
+const stockChart = document.getElementById("stockChart")
+const stockChartCtx = stockChart.getContext("2d")
 
 let user = {
     cash: 10000,
@@ -44,6 +48,22 @@ function formatDate(timestamp){
     })
 
     return `${dayName} ${timeString}`
+}
+
+function drawLineChart(canvas, context, points) {
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    if (points.length < 2 || canvas.style.display == "none") {return}
+    const padding = canvas.width / 75
+    const stepX = (canvas.width - padding * 2) / (points.length - 1)
+    context.strokeStyle = points[1] > points.at(-1) ? "rgb(255, 181, 181)" : "rgb(185, 255, 180)"
+    context.lineWidth = 2.5
+    context.beginPath()
+    points.forEach((point, index) => {
+        const x = padding + index * stepX
+        const y = canvas.height - padding - (point - Math.min(...points)) / (Math.max(...points) - Math.min(...points)) * (canvas.height - 2 * padding)
+        if (index == 0) {context.moveTo(x, y)} else {context.lineTo(x, y)}
+    })
+    context.stroke()
 }
 
 function homePage() {
@@ -136,8 +156,7 @@ function updateStocks(){
         if (stocks[stock].priceHistory.length == 51) {stocks[stock].priceHistory.shift()}
     })
     updatePortfolio()
-    if (user) {user.valueList.push({timestamp: Date.now(), value: user.value})}
-    if (user.valueList.length == 201) {user.valueList.shift()}
+    saveUser()
     setTimeout(updateStocks, 3000)
 }
 
@@ -146,6 +165,8 @@ function updatePortfolio() {
         return sum + stockdata.qty * stocks[stock].price
     }, 0)
     user.value = user.cash + stocksValue
+    if (user) {user.valueList.push({timestamp: Date.now(), value: user.value})}
+    if (user.valueList.length == 201) {user.valueList.shift()}
     updateUI()
 }
 
@@ -187,6 +208,8 @@ function updateUI(){
     }
     updateTrades()
     updateWatchlist()
+    drawLineChart(homeChart, homeChartCtx, user.valueList.map(stamp => stamp.value))
+    drawLineChart(stockChart, stockChartCtx, stocks[user.selectedStock].priceHistory)
 }
 
 function selectStock(stock) {
