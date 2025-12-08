@@ -19,6 +19,7 @@ const homeChart = document.getElementById("homeChart")
 const homeChartCtx = homeChart.getContext("2d")
 const stockChart = document.getElementById("stockChart")
 const stockChartCtx = stockChart.getContext("2d")
+const errorDiv = document.getElementById("errorDiv")
 
 let user = {
     cash: 10000,
@@ -67,6 +68,12 @@ function drawLineChart(canvas, context, points) {
     context.stroke()
 }
 
+function showError(msg) {
+    errorDiv.style.display = "flex"
+    errorDiv.textContent = msg
+    setTimeout(() => {error.style.display = "none"}, 5000)
+}
+
 function homePage() {
     document.querySelectorAll(".trade").forEach(element => {
         element.style.display = "none"
@@ -103,6 +110,7 @@ function updateSelector(){
 
 function updateButtons() {
     buyBtn.disabled = user.cash < stocks[user.selectedStock].price * parseInt(qtyInput.value)
+    sellBtn.disabled = false
     if (user.positions[user.selectedStock] && user.positions[user.selectedStock].qty < 0) {
         buyBtn.style.backgroundColor = "rgba(51, 42, 20, 0.5)"
         buyBtn.style.borderColor = "rgba(51, 44, 20, 0.8)"
@@ -112,11 +120,12 @@ function updateButtons() {
         buyBtn.style = ""
         buyBtn.textContent = "Buy"
     }
-    if (!(user.positions[user.selectedStock]) || (user.positions[user.selectedStock].qty < qtyInput.value)) {
+    if (!(user.positions[user.selectedStock]) || (user.positions[user.selectedStock].qty < parseInt(qtyInput.value))) {
         sellBtn.style.backgroundColor = "rgba(37, 20, 51, 0.5)"
         sellBtn.style.borderColor = "rgba(38, 20, 51, 0.8)"
         sellBtn.style.color = "rgba(239, 221, 255, 1)"
         sellBtn.textContent = "Short"
+        sellBtn.disabled = (user.totalShorts + parseInt(qtyInput.value) * stocks[user.selectedStock].price > user.value)
     } else {
         sellBtn.style = ""
         sellBtn.textContent = "Sell"
@@ -301,6 +310,7 @@ resetBtn.addEventListener("click", () => {
         positions: {},
         trades: [],
         valueList: [],
+        totalShorts: 0,
     }
     stocks = {
         "Potato Co": {price: 100, priceHistory: [], volatility: 1, baseVolatility: 0.2, watchlist: false},

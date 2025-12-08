@@ -208,3 +208,16 @@ input {
 .red {
     color: rgb(255, 181, 181);
 }
+
+.error {
+    display: none;
+    position: absolute;
+    top: 20%;
+    width: 30%;
+    padding: 0.5rem 0;
+    background-color: rgb(225, 51, 51);
+    border: 0.2rem solid rgb(179, 11, 11);
+    color: #faa;
+    border-radius: 2rem;
+    font-size: 1.5rem;
+}
