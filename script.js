@@ -27,6 +27,7 @@ let user = {
     positions: {},
     trades: [],
     valueList: [],
+    totalShorts: 0,
 }
 
 let stocks = {
@@ -55,7 +56,7 @@ function drawLineChart(canvas, context, points) {
     if (points.length < 2 || canvas.style.display == "none") {return}
     const padding = canvas.width / 75
     const stepX = (canvas.width - padding * 2) / (points.length - 1)
-    context.strokeStyle = points[1] > points.at(-1) ? "rgb(255, 181, 181)" : "rgb(185, 255, 180)"
+    context.strokeStyle = points[0] > points.at(-1) ? "rgb(255, 181, 181)" : "rgb(185, 255, 180)"
     context.lineWidth = 2.5
     context.beginPath()
     points.forEach((point, index) => {
@@ -98,6 +99,28 @@ function updateSelector(){
         stockSelector.appendChild(stockOption)
     })
     stockSelector.value = user.selectedStock
+}
+
+function updateButtons() {
+    buyBtn.disabled = user.cash < stocks[user.selectedStock].price * parseInt(qtyInput.value)
+    if (user.positions[user.selectedStock] && user.positions[user.selectedStock].qty < 0) {
+        buyBtn.style.backgroundColor = "rgba(51, 42, 20, 0.5)"
+        buyBtn.style.borderColor = "rgba(51, 44, 20, 0.8)"
+        buyBtn.style.color = "rgb(255, 245, 221)"
+        buyBtn.textContent = "Cover"
+    } else {
+        buyBtn.style = ""
+        buyBtn.textContent = "Buy"
+    }
+    if (!(user.positions[user.selectedStock]) || (user.positions[user.selectedStock].qty < qtyInput.value)) {
+        sellBtn.style.backgroundColor = "rgba(37, 20, 51, 0.5)"
+        sellBtn.style.borderColor = "rgba(38, 20, 51, 0.8)"
+        sellBtn.style.color = "rgba(239, 221, 255, 1)"
+        sellBtn.textContent = "Short"
+    } else {
+        sellBtn.style = ""
+        sellBtn.textContent = "Sell"
+    }
 }
 
 function updateTrades(){
@@ -182,7 +205,7 @@ function updateUI(){
     if (user.positions[user.selectedStock]) {
         const position = user.positions[user.selectedStock]
         positionLabel.innerHTML = `Your position: ${position.qty} shares of ${user.selectedStock}. <br>
-        Average price: $${position.avg.toFixed(2)}, unrealized P/L: $${(position.qty * (stocks[user.selectedStock].price - position.avg)).toFixed(2)}`
+        Average price: $${position.avg.toFixed(2)}, Unrealized P/L: $${(position.qty * (stocks[user.selectedStock].price - position.avg)).toFixed(2)}`
     } else {
         positionLabel.textContent = "No position for the selected stock."
     }
@@ -199,13 +222,14 @@ function updateUI(){
             <p>${position.qty}</p>
             <p>$${position.avg.toFixed(2)}</p>
             <p>$${(position.qty * stocks[stock].price).toFixed(2)}</p>
-            <p class=${position.avg > stocks[stock].price ? "red" : "green"}>
-                $${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)} (${((stocks[stock].price / position.avg - 1) * 100).toFixed(2)}%)
+            <p class=${position.avg * Math.sign(position.qty) > stocks[stock].price * Math.sign(position.qty) ? "red" : "green"}>
+                $${(position.qty * (stocks[stock].price - position.avg)).toFixed(2)} (${((stocks[stock].price / position.avg - 1) * 100 * Math.sign(position.qty)).toFixed(2)}%)
             </p>`
     })} else {
         positionsDiv.innerHTML = ""
         noPositionsMessage.style.display = positionsDiv.style.display
     }
+    updateButtons()
     updateTrades()
     updateWatchlist()
     drawLineChart(homeChart, homeChartCtx, user.valueList.map(stamp => stamp.value))
@@ -222,16 +246,22 @@ function selectStock(stock) {
 function buyStock(amount) {
     if (!(amount > 0)) {return}
     const cost = amount * stocks[user.selectedStock].price
+    let action = "buy"
     if (user.cash >= cost) {
         user.cash -= cost
         if (!(user.selectedStock in user.positions)) {
             user.positions[user.selectedStock] = {qty: amount, avg: stocks[user.selectedStock].price}
         } else {
             const position = user.positions[user.selectedStock]
+            if (position.qty < 0) {
+                action = "cover"
+                user.totalShorts -= Math.min(position.qty, amount) * position.avg
+            } 
             position.avg = (position.qty * position.avg + cost) / (position.qty + amount)
             position.qty += amount
+            if (position.qty == 0) {delete user.positions[user.selectedStock]}
         }
-        user.trades.unshift({timestamp: Date.now(), action: "buy", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
+        user.trades.unshift({timestamp: Date.now(), action: action, stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
         updateTrades()
         updatePortfolio()
         saveUser()
@@ -239,22 +269,25 @@ function buyStock(amount) {
 }
 
 function sellStock(amount) {
-    if (!(amount > 0)) {return}
-    if (!(user.selectedStock in user.positions)) {return}
-    const position = user.positions[user.selectedStock]
-    if (position.qty >= amount) {
-        position.qty -= amount
-        if (position.qty == 0) {delete user.positions[user.selectedStock]}
-        user.cash += amount * stocks[user.selectedStock].price
-        user.trades.unshift({timestamp: Date.now(), action: "sell", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
-        updateTrades()
-        updatePortfolio()
-        saveUser()
+    if ((!(amount > 0)) || (user.totalShorts + amount * stocks[user.selectedStock].price > user.value)) {return}
+    if (!(user.selectedStock in user.positions)) {
+        user.positions[user.selectedStock] = {qty: 0, avg: stocks[user.selectedStock].price}
     }
+    const position = user.positions[user.selectedStock]
+    position.qty -= amount
+    if (position.qty == 0) {delete user.positions[user.selectedStock]}
+    user.cash += amount * stocks[user.selectedStock].price
+    user.totalShorts += amount * stocks[user.selectedStock].price
+    user.trades.unshift({timestamp: Date.now(), action: (position.qty < 0) ? "short" : "sell", stock: user.selectedStock, quantity: amount, price: stocks[user.selectedStock].price})
+    updateTrades()
+    updatePortfolio()
+    saveUser()
 }
 
 buyBtn.addEventListener("click", () => buyStock(parseInt(qtyInput.value)))
 sellBtn.addEventListener("click", () => sellStock(parseInt(qtyInput.value)))
+
+qtyInput.addEventListener("input", () => updateButtons())
 
 stockSelector.addEventListener("change", (event) => {
     selectStock(event.target.value)

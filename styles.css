@@ -182,6 +182,11 @@ input {
 .controlsDiv button {
     padding: 0.4rem 0.8rem;
     font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.controlsDiv button:disabled {
+    opacity: 0.6;
 }
 
 #buyBtn {
@@ -203,10 +208,3 @@ input {
 .red {
     color: rgb(255, 181, 181);
 }
-
-/*
-- finish trade page design done
-- stocks rework done
-- p/l design (green, red, % etc) done
-- line chart for portfolio
-- line chart for stocks */

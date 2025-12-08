@@ -44,11 +44,13 @@
         </div>
         <div class="horiz trade" style="margin-bottom: 0.5rem; justify-content: center;">
             <p style="margin: 0;">Quantity:</p>
-            <input type="number" id="qtyInput">
+            <input type="number" min="1" id="qtyInput">
         </div>
         <div class="horiz trade controlsDiv">
-            <button id="buyBtn">Buy</button>
-            <button id="sellBtn">Sell</button>
+            <button id="buyBtn" class="coverBtn">Buy</button>
+            <button id="sellBtn" class="shortBtn">Sell</button>
+            <!-- <button id="shortBtn">Short</button>
+            <button id="coverBtn">Cover</button> -->
         </div>
         <p id="positionLabel" class="trade">Your position: 0 stocks</p>
         <div class="expando home">
